@@ -61,7 +61,7 @@ Why was Log4Shell such an issue in 2021? I can reproduce this vulnerability at h
 
 For the attack part, I used [project published in 2017](https://github.com/mbechler/marshalsec). So in 2021 it was trivial to implement a Log4Shell exploit.
 
-2 more related CVEs were discovered in Log4j [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105), but it was not so dangerous.
+3 more related CVEs were discovered in Log4j [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046), [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/cve-2021-44832) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105) but it didn't do such a big impact.
 
 Remote code downloading in JNDI is permanently disabled in [Java 24](https://bugs.openjdk.org/browse/JDK-8338536).
 
