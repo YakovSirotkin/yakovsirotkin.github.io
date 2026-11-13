@@ -107,7 +107,7 @@ java.lang.Exception
 	at java.naming/javax.naming.InitialContext.lookup(InitialContext.java:409)
 	at org.apache.logging.log4j.core.net.JndiManager.lookup(JndiManager.java:172)
 ```
-It also works for Java 11, but for Java 17 I didn't reproduce the exploit (it does not mean that Java 17 is safe).
+It also works for Java 8, but for Java 17 I didn't reproduce the exploit (it does not mean that Java 17 is safe).
 
 Maybe this exploit is too complex for kids, but there were a lot of Java 11/Tomcat 8 servers in 2021.
 
