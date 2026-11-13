@@ -2,14 +2,14 @@
 *November 13, 2026*
 
 
->In December 2021, the Log4Shell exploit made a lot of noise, and I want to tell you the long story of how it became possible.
+>In December 2021, the Log4Shell ([CVE-2021-44228](https://nvd.nist.gov/vuln/detail/cve-2021-44228)) exploit made a lot of noise, and I want to tell you the long story of how it became possible.
 
 In 1999, 64 MB of RAM was normal for a server (not 64 GB), and it was too expensive to run each Java web application in a separate JVM. So, the Java Servlet 2.2 specification introduced the WAR file format - a ZIP archive with the content that defines a Java web application. Apache Tomcat 3.0 supported deployment of several WAR files in one JVM. In 2001, the Java Servlet 2.3 specification was introduced, and it supported JNDI lookups with the `java:comp/env` prefix.
 
 In 2007, Logback added a new feature: configuring logging according to JNDI lookups for constant names
  `JNDI_CONFIGURATION_RESOURCE = "java:comp/env/logback/configuration-resource"` and `JNDI_CONTEXT_NAME = "java:comp/env/logback/context-name"`. No security issue [here](https://github.com/qos-ch/logback/commit/ae37a91bcc26a0366b20d30c00b97ea183bbd692).
 
- But in 2013, Log4j decided to get feature parity and created [LOG4J2-313](https://issues.apache.org/jira/browse/LOG4J2-313). The intended use was only in configuration files like <Routes pattern="$${jndi:logging/context-name}">. There were already many other string substitutors; one more did not look dangerous. But the java:comp/env prefix was added like that:
+ But in 2013, Log4j decided to get feature parity and created [LOG4J2-313](https://issues.apache.org/jira/browse/LOG4J2-313). The intended use was only in configuration files like `<Routes pattern="$${jndi:logging/context-name}">`. There were already many other string substitutors; one more did not look dangerous. But the java:comp/env prefix was added like that:
 
 ```java
     private String convertJndiName(String jndiName) {
@@ -52,14 +52,16 @@ java.lang.Exception
 	...
 ```
 
-Look at it: all bad things are happening deep inside Java internals. So, the landmine was placed long ago by Sun Microsystems. I am not an expert in the LDAP protocol, but it seems to me a very strange idea to download bytecode from an LDAP server and run it.
+Look at it: all bad things are happening deep inside Java internals. So, the landmine was placed long ago by Sun Microsystems in [RFC 2713](https://www.rfc-editor.org/info/rfc2713/). I am not an expert in the LDAP protocol, but it seems to me a very strange idea to download bytecode from an LDAP server and run it. 
 
-I searched for **JNDI Injection** and found [detailed slides](https://blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf) from Black Hat USA 2016 conference.  In Java 8u121, released in 2017, findings from this presentation were partially addressed, but the LDAP attack vector [was fixed only in Java 8u191 in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834).
+I searched for **JNDI Injection** and found [detailed slides](https://blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf) from Black Hat USA 2016 conference.  In Java 8u121, released in 2017, findings from this presentation were partially addressed, but the LDAP attack vector [was fixed only in Java 8u191 in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834). Need to notices, that this is not a complete solution, remaining attach vector [expalined here](https://www.veracode.com/blog/research/exploiting-jndi-injections-java).
 
 
 Why was Log4Shell such an issue in 2021? I can reproduce this vulnerability at home easily, because I have Java 8u66 installed on my desktop in 2015 (hardware of this machine was totally renewed, and it runs another operating system now). There is no surprise that many companies were running old Java 8 distributions in production in 2021.
 
 For the attack part, I used [project published in 2017](https://github.com/mbechler/marshalsec). So in 2021 it was trivial to implement a Log4Shell exploit.
+
+2 more related CVEs were discovered in Log4j [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105), but it was not so dangerous.
 
 Remote code downloading in JNDI is permanently disabled in [Java 24](https://bugs.openjdk.org/browse/JDK-8338536).
 
