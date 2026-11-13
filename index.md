@@ -1,6 +1,6 @@
 
 
-[LinkedIn](https://www.linkedin.com/in/yakovsirotkin/)
+[LinkedIn](https://www.linkedin.com/in/yakovsirotkin/) [GitHub](https://github.com/YakovSirotkin)
 
 <yakov.sirotkin@gmail.com>
 
