@@ -111,8 +111,6 @@ It also works for Java 8, but for Java 17 I didn't reproduce the exploit (it doe
 
 Maybe this exploit is too complex for kids, but there were a lot of Java 11/Tomcat 8 servers in 2021.
 
-3 more related CVEs were discovered in Log4j later: [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/cve-2021-45046), [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/cve-2021-44832) and [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/cve-2021-45105), but the impact was not that huge.
-
 Remote code downloading in JNDI is permanently disabled in [Java 24](https://bugs.openjdk.org/browse/JDK-8338536).
 
 Why am I writing this article in 2026? Because I am looking for a job in Israel, and cybersecurity companies here are growing fast. So, I did this research to improve my skills. And it is clear why demand is growing for cybersecurity solutions: against attackers with AI, we need much more serious defence.
