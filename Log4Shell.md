@@ -4,7 +4,7 @@
 
 >In December 2021, the Log4Shell ([CVE-2021-44228](https://nvd.nist.gov/vuln/detail/cve-2021-44228)) exploit made a lot of noise, and I want to tell you the long story of how it became possible.
 
-In 1999, 64 MB of RAM was normal for a server (not 64 GB), and it was too expensive to run each Java web application in a separate JVM. So, the Java Servlet 2.2 specification introduced the WAR file format - a ZIP archive with the content that defines a Java web application. Apache Tomcat 3.0 supported deployment of several WAR files in one JVM. In 2001, the Java Servlet 2.3 specification was introduced, and it supported JNDI lookups with the `java:comp/env` prefix.
+In 1999, 64 MB of RAM was normal for a server (not 64 GB), and it was too expensive to run each Java web application in a separate JVM. So, the Java Servlet 2.2 specification introduced the WAR file format - a ZIP archive with the content that defines a Java web application. Apache Tomcat 3.0 supported deployment of several WAR files in one JVM. In 2001, the Java Servlet 2.3 specification was introduced, and it mentions JNDI lookups with the `java:comp/env` prefix.
 
 In 2007, Logback added a new feature: configuring logging according to JNDI lookups for constant names
  `JNDI_CONFIGURATION_RESOURCE = "java:comp/env/logback/configuration-resource"` and `JNDI_CONTEXT_NAME = "java:comp/env/logback/context-name"`. No security issue [here](https://github.com/qos-ch/logback/commit/ae37a91bcc26a0366b20d30c00b97ea183bbd692).
