@@ -66,7 +66,7 @@ For the target application I added dependencies
     implementation("org.apache.tomcat:tomcat-jasper-el:8.5.20")
 ```
 
-For the RCE, I created `ClassThatPrintsExceptionInConstructor` and update the attacker payload: 
+For the RCE, I created `ClassThatPrintsExceptionInConstructor` and updated the attacker payload: 
 
 ```java
 	ref.add(new StringRefAddr("x", "\"\".getClass().forName(\"ClassThatPrintsExceptionInConstructor\").newInstance()"));
