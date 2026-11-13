@@ -1,6 +1,8 @@
 # Log4Shell exploit story
+*November 13, 2026*
 
-In December 2021, the Log4Shell exploit made a lot of noise, and I want to tell you the long story of how it became possible.
+
+>In December 2021, the Log4Shell exploit made a lot of noise, and I want to tell you the long story of how it became possible.
 
 In 1998, 64 MB of RAM was normal for a server (not 64 GB), and it was too expensive to run each Java web application in a separate JVM. So, the Java Servlet 2.1 specification introduced the WAR file format - a ZIP archive with the content that defines a Java web application. Apache Tomcat 3.0 supported deployment of several WAR files in one JVM starting in 2000. In 2001, the Java Servlet 2.3 specification was introduced, and it supported JNDI lookups with the `java:comp/env` prefix.
 
