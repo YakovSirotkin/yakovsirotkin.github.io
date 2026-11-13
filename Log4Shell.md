@@ -58,7 +58,7 @@ As shown here, the vulnerability relies heavily on deep Java internals. The land
 
 Until the release of [Java 8u191 in 2018](https://mbechler.github.io/2018/11/01/Java-CVE-2018-3149/) Log4Shell exploit was available even for kids. However, as the [Veracode team explained in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java), patching that single vector was not a complete solution.
 
-To reproduce the exploit I added dependency `implementation("org.apache.tomcat:tomcat-catalina:8.0.1")` for attacker RMI server, , which provides `org.apache.naming.ResourceRef`.
+To reproduce the exploit I added dependency `implementation("org.apache.tomcat:tomcat-catalina:8.0.1")` for attacker RMI server, which provides `org.apache.naming.ResourceRef`.
 
 For the target application I added dependencies
 ```
