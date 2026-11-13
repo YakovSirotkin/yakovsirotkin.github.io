@@ -54,7 +54,7 @@ java.lang.Exception
 
 Look at it: all bad things are happening deep inside Java internals. So, the landmine was placed long ago by Sun Microsystems in [RFC 2713](https://www.rfc-editor.org/info/rfc2713/). I am not an expert in the LDAP protocol, but it seems to me a very strange idea to download bytecode from an LDAP server and run it. 
 
-So, until [Java 8u191 released in 2018](https://bugzilla.redhat.com/show_bug.cgi?id=1639834) Log4Shell exploit was available even for kids. But as [Veracode team explained in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java) - this is not a complete solution.
+So, until [Java 8u191 released in 2018](https://mbechler.github.io/2018/11/01/Java-CVE-2018-3149/) Log4Shell exploit was available even for kids. But as [Veracode team explained in 2019](https://www.veracode.com/blog/research/exploiting-jndi-injections-java) - this is not a complete solution.
 
 To reproduce the exploit I added dependency `implementation("org.apache.tomcat:tomcat-catalina:8.0.1")` for attacker RMI server - this is good enough for importing `org.apache.naming.ResourceRef`.
 
